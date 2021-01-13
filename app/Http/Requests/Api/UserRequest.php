@@ -3,13 +3,12 @@
 namespace App\Http\Requests\Api;
 
 use App\Support\Response\Response;
-
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class LoginRequest extends FormRequest
+class UserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -29,6 +28,7 @@ class LoginRequest extends FormRequest
     public function rules()
     {
         return [
+            'name' => 'required|max:150',
             'email' => 'required|email|max:250',
             'password' => 'required|max:50',
         ];
@@ -37,6 +37,7 @@ class LoginRequest extends FormRequest
     public function attributes()
     {
         return [
+            'name' => 'İsim',
             'email' => 'E-Posta',
             'password' => 'Şifre',
         ];

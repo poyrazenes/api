@@ -4,43 +4,25 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\User;
 
-use App\Http\Requests\Api\LoginRequest;
-
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\Api\UserRequest;
 
 class UserController extends BaseController
 {
     public function __construct()
     {
-        $this->middleware('auth:api')
-            ->except('login', 'register');
-
         parent::__construct();
     }
 
-    public function store(Request $request)
+    public function store(UserRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|between:2,100',
-            'email' => 'required|string|email|max:100|unique:users',
-            'password' => 'required|string|min:6',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors()->all(), 422);
-        }
-
-        $data = $validator->validated();
+        $data = $request->validated();
 
         $data['password'] = bcrypt($data['password']);
 
-        $user = User::create($data);
+        User::create($data);
 
-        return response()->json([
-            'message' => 'User successfully registered',
-            'user' => $user
-        ], 201);
+        return $this->response->setCode(201)
+            ->setMessage('User successfully registered')->respond();
     }
 
     public function profile()
