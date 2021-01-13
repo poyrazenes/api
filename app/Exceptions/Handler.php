@@ -2,8 +2,14 @@
 
 namespace App\Exceptions;
 
+use App\Support\Response\Response;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Throwable;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Exception\MethodNotAllowedException;
+
+use Throwable, Exception;
 
 class Handler extends ExceptionHandler
 {
@@ -36,5 +42,22 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function render($request, Throwable $exception)
+    {
+        $response = new Response();
+
+        if ($exception instanceof NotFoundHttpException) {
+            $response->setCode(404)->setMessage('Sonuç bulunamadı!');
+        } elseif ($exception instanceof MethodNotAllowedHttpException) {
+            $response->setCode(405)->setMessage('İstekleri karıştırdınız!');
+        } elseif ($exception instanceof AuthenticationException) {
+            $response->setCode(401)->setMessage('Authentication başarısız!');
+        } else {
+            $response->setCode(500)->setMessage($exception->getMessage());
+        }
+
+        return $response->respond();
     }
 }

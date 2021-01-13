@@ -8,18 +8,18 @@ class Response
 {
     private $response = null;
 
-    public function __construct(
-        int $code = 200,
-        bool $status = false,
-        string $message = '',
-        array $data = [],
-        array $meta = []
-    )
+    /**
+     * Response constructor.
+     * @param int $code
+     * @param string $message
+     * @param $data
+     * @param $meta
+     */
+    public function __construct(int $code = 200, string $message = '', $data = null, $meta = null)
     {
         $this->response = new \stdClass();
 
         $this->response->code = $code;
-        $this->response->status = $status;
         $this->response->message = $message;
         $this->response->data = $data;
         $this->response->meta = $meta;
@@ -31,25 +31,19 @@ class Response
         return $this;
     }
 
-    public function setStatus(bool $status): Response
-    {
-        $this->response->status = $status;
-        return $this;
-    }
-
     public function setMessage(string $message): Response
     {
         $this->response->message = $message;
         return $this;
     }
 
-    public function setData(array $data): Response
+    public function setData($data): Response
     {
         $this->response->data = $data;
         return $this;
     }
 
-    public function setMeta(array $meta): Response
+    public function setMeta($meta): Response
     {
         $this->response->meta = $meta;
         return $this;

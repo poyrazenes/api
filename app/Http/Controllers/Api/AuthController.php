@@ -1,33 +1,31 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Models\User;
-use Illuminate\Http\Request;
 
+use App\Http\Requests\Api\LoginRequest;
+
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class AuthController extends Controller
+class AuthController extends BaseController
 {
     public function __construct()
     {
         $this->middleware('auth:api')
             ->except('login', 'register');
+
+        parent::__construct();
     }
 
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required|string|min:6',
-        ]);
+        $data = $request->validated();
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        if (!$token = auth()->attempt($validator->validated())) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+        if (!$token = auth()->attempt($data)) {
+            return $this->response->setCode(401)
+                ->setMessage('Yetkilendirme yapılamadı, lütfen tekrar deneyin!')->respond();
         }
 
         return $this->createNewToken($token);
@@ -59,7 +57,8 @@ class AuthController extends Controller
 
     public function userProfile()
     {
-        return response()->json(auth()->user());
+        return $this->response->setCode(200)
+            ->setMessage('İşlem başarılı.')->setData(auth()->user())->respond();
     }
 
     public function refresh()
@@ -69,18 +68,19 @@ class AuthController extends Controller
 
     public function logout()
     {
-        //auth()->logout();
+        auth()->logout();
 
-        return response()->json(['message' => 'User successfully signed out']);
+        return $this->response->setCode(200)
+            ->setMessage('İşlem başarılı.')->respond();
     }
 
     protected function createNewToken($token)
     {
-        return response()->json([
+        $data = [
             'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60,
-            'user' => auth()->user()
-        ]);
+        ];
+
+        return $this->response->setCode(200)
+            ->setMessage('İşlem başarılı.')->setData($data)->respond();
     }
 }
