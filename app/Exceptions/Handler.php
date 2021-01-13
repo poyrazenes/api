@@ -4,9 +4,13 @@ namespace App\Exceptions;
 
 use App\Support\Response\Response;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 
 use Throwable, Exception;
@@ -54,6 +58,8 @@ class Handler extends ExceptionHandler
             $response->setCode(405)->setMessage('İstekleri karıştırdınız!');
         } elseif ($exception instanceof AuthenticationException) {
             $response->setCode(401)->setMessage('Authentication başarısız!');
+        } elseif ($exception instanceof TooManyRequestsHttpException) {
+            $response->setCode(429)->setMessage('Çok fazla istek gönderildi!');
         } else {
             $response->setCode(500)->setMessage($exception->getMessage());
         }

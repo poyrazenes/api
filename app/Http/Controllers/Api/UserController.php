@@ -9,7 +9,7 @@ use App\Http\Requests\Api\LoginRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class AuthController extends BaseController
+class UserController extends BaseController
 {
     public function __construct()
     {
@@ -19,19 +19,7 @@ class AuthController extends BaseController
         parent::__construct();
     }
 
-    public function login(LoginRequest $request)
-    {
-        $data = $request->validated();
-
-        if (!$token = auth()->attempt($data)) {
-            return $this->response->setCode(401)
-                ->setMessage('Giriş başarısız, bilgileri kontrol edip tekrar deneyin!')->respond();
-        }
-
-        return $this->createNewToken($token);
-    }
-
-    public function register(Request $request)
+    public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|between:2,100',
@@ -55,32 +43,9 @@ class AuthController extends BaseController
         ], 201);
     }
 
-    public function userProfile()
+    public function profile()
     {
         return $this->response->setCode(200)
             ->setMessage('İşlem başarılı.')->setData(auth()->user())->respond();
-    }
-
-    public function refresh()
-    {
-        return $this->createNewToken(auth()->refresh());
-    }
-
-    public function logout()
-    {
-        auth()->logout();
-
-        return $this->response->setCode(200)
-            ->setMessage('İşlem başarılı.')->respond();
-    }
-
-    protected function createNewToken($token)
-    {
-        $data = [
-            'access_token' => $token,
-        ];
-
-        return $this->response->setCode(200)
-            ->setMessage('İşlem başarılı.')->setData($data)->respond();
     }
 }
