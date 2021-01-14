@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'auth'], function () {
     Route::post('/login', 'AuthController@login');
-    Route::post('/register', 'AuthController@register');
 
     Route::group(['middleware' => 'api.auth'], function () {
         Route::post('/logout', 'AuthController@logout');
@@ -24,7 +23,7 @@ Route::group(['prefix' => 'auth'], function () {
 });
 
 Route::group(['prefix' => 'user'], function () {
-    Route::post('/register', 'UserController@store');
+    Route::post('/store', 'UserController@store');
 
     Route::group(['middleware' => 'api.auth'], function () {
         Route::post('/profile', 'UserController@profile');

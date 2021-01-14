@@ -25,14 +25,11 @@ class Auth
         try {
             JWTAuth::parseToken()->authenticate();
         } catch (TokenInvalidException $exception) {
-            return $response->setCode(401)
-                ->setMessage('Token is Invalid')->respond();
+            return $response->setCode(401)->setMessage('Token is Invalid')->respond();
         } catch (TokenExpiredException $exception) {
-            $response->setCode(401)
-                ->setMessage('Token is Expired')->respond();
+            return $response->setCode(401)->setMessage('Token is Expired')->respond();
         } catch (\Throwable $exception) {
-            $response->setCode(401)
-                ->setMessage('Token not found')->respond();
+            return $response->setCode(401)->setMessage('Token not found')->respond();
         }
 
         return $next($request);

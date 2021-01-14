@@ -55,9 +55,9 @@ class Handler extends ExceptionHandler
         if ($exception instanceof NotFoundHttpException) {
             $response->setCode(404)->setMessage('Sonuç bulunamadı!');
         } elseif ($exception instanceof MethodNotAllowedHttpException) {
-            $response->setCode(405)->setMessage('İstekleri karıştırdınız!');
+            $response->setCode(405)->setMessage('İstek metodu yanlış!');
         } elseif ($exception instanceof AuthenticationException) {
-            $response->setCode(401)->setMessage('Authentication başarısız!');
+            $response->setCode(401)->setMessage('Yetkisiz giriş!');
         } elseif ($exception instanceof TooManyRequestsHttpException) {
             $response->setCode(429)->setMessage('Çok fazla istek gönderildi!');
         } else {
